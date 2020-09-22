@@ -4,6 +4,8 @@ project(ars_sim_environment)
 find_package(catkin REQUIRED COMPONENTS
 )
 
+catkin_python_setup()
+
 catkin_package(
   DEPENDS
   CATKIN_DEPENDS
@@ -11,3 +13,6 @@ catkin_package(
   LIBRARIES
 )
 
+include_directories(
+    ${catkin_INCLUDE_DIRS}
+)
