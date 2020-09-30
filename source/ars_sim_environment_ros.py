@@ -14,6 +14,8 @@ import rospy
 
 import rospkg
 
+import std_msgs.msg
+from std_msgs.msg import Bool
 from std_msgs.msg import Header
 
 import geometry_msgs.msg
@@ -48,6 +50,11 @@ class ArsSimEnvironmentRos:
 
   # World frame
   world_frame = 'world'
+
+
+  #
+  flag_dynamic_obstacles = True
+  flag_dyn_obst_sub = None
 
 
 
@@ -85,6 +92,9 @@ class ArsSimEnvironmentRos:
   def __init__(self):
 
 
+    #
+    self.flag_dynamic_obstacles = True
+
 
     #
     self.obstacles_static_msg = MarkerArray()
@@ -97,7 +107,7 @@ class ArsSimEnvironmentRos:
     return
 
 
-  def init(self, node_name='ars_motion_controller_node'):
+  def init(self, node_name='ars_sim_environment_node'):
     #
 
     # Init ROS
@@ -105,7 +115,7 @@ class ArsSimEnvironmentRos:
 
     
     # Package path
-    pkg_path = rospkg.RosPack().get_path('ars_motion_controller')
+    pkg_path = rospkg.RosPack().get_path('ars_sim_environment')
     
 
     #### READING PARAMETERS ###
@@ -115,51 +125,12 @@ class ArsSimEnvironmentRos:
     ###
 
 
-    # Set static obstacles
-
-    self.obstacles_static_msg = MarkerArray()
-
-    self.obstacles_static_msg.markers = []
+    # Obstacles static
+    self.initObstaclesStatic()
 
 
-    # obstacle i
-
-    obstacle_i = Marker()
-
-    obstacle_i.header = Header()
-    obstacle_i.header.stamp = rospy.Time()
-    obstacle_i.header.frame_id = self.world_frame
-
-    obstacle_i.ns = 'static'
-    obstacle_i.id = 0
-
-    obstacle_i.type = 3
-
-    obstacle_i.action = 0
-
-    obstacle_i.pose.position.x = 1.0
-    obstacle_i.pose.position.y = 1.0
-    obstacle_i.pose.position.z = 1.0
-
-    obstacle_i.pose.orientation.w = 1.0
-    obstacle_i.pose.orientation.x = 0.0
-    obstacle_i.pose.orientation.y = 0.0
-    obstacle_i.pose.orientation.z = 0.0
-
-    obstacle_i.scale.x = 0.5
-    obstacle_i.scale.y = 0.5
-    obstacle_i.scale.z = 2.0
-
-    obstacle_i.color.r = 1.0
-    obstacle_i.color.g = 0.0
-    obstacle_i.color.b = 0.0
-    obstacle_i.color.a = 1.0
-
-    obstacle_i.lifetime = rospy.Duration(0.0)
-
-    self.obstacles_static_msg.markers.append(obstacle_i)
-
-    #print(self.obstacles_static_msg)
+    # Obstacles dynamic
+    self.initObstaclesDynamic()
 
 
     
@@ -176,6 +147,10 @@ class ArsSimEnvironmentRos:
     self.obstacles_static_pub = rospy.Publisher('obstacles_static', MarkerArray, queue_size=1, latch=True)
     #
     self.obstacles_dynamic_pub = rospy.Publisher('obstacles_dynamic', MarkerArray, queue_size=1, latch=True)
+
+
+    # Subscribers
+    self.flag_dyn_obst_sub = rospy.Subscriber('flag_dynamic_obstacles', Bool, self.flagDynamObstCallback)
 
 
 
@@ -199,17 +174,41 @@ class ArsSimEnvironmentRos:
     return
 
 
+  def flagDynamObstCallback(self, flag_dynamic_obstacles_msg):
+
+    self.flag_dynamic_obstacles = flag_dynamic_obstacles_msg.data
+
+    if(self.flag_dynamic_obstacles == True):
+      self.initObstaclesDynamic()
+
+    else:
+      self.emptyObstaclesDynamic()
+
+    # Publish
+    self.publishObstacleDynamic()
+
+
+    return
+
+
+  def publishObstacleDynamic(self):
+
+    self.obstacles_dynamic_pub.publish(self.obstacles_dynamic_msg)
+
+    return
+
   
-
-
   def updateDynObstaclesAndPublish(self, time_stamp_current):
 
-    # Update
-    # TODO
+    #
+    if(self.flag_dynamic_obstacles):
+
+        # Update
+        # TODO
 
 
-    # Publish dynamic obstacles
-    self.obstacles_dynamic_pub.publish(self.obstacles_dynamic_msg)
+        # Publish dynamic obstacles
+        self.publishObstacleDynamic()
 
 
     # End
@@ -221,9 +220,6 @@ class ArsSimEnvironmentRos:
     # Get time
     time_stamp_current = rospy.Time.now()
 
-    #self.obstacles_static_msg = MarkerArray()
-
-    #print(self.obstacles_static_msg)
 
     # Publish static obstacles
     self.obstacles_static_pub.publish(self.obstacles_static_msg)
@@ -246,6 +242,170 @@ class ArsSimEnvironmentRos:
     return
 
 
+  def initObstaclesStatic(self):
 
 
-  
+    # Set static obstacles
+
+    self.obstacles_static_msg.markers = []
+
+
+    # obstacle i
+
+    obstacle_i = Marker()
+
+    obstacle_i.header = Header()
+    obstacle_i.header.stamp = rospy.Time()
+    obstacle_i.header.frame_id = self.world_frame
+
+    obstacle_i.ns = 'static'
+    obstacle_i.id = 0
+
+    obstacle_i.type = 3
+
+    obstacle_i.action = 0
+
+    obstacle_i.pose.position.x = 2.0
+    obstacle_i.pose.position.y = 2.0
+    obstacle_i.pose.position.z = 1.0
+
+    obstacle_i.pose.orientation.w = 1.0
+    obstacle_i.pose.orientation.x = 0.0
+    obstacle_i.pose.orientation.y = 0.0
+    obstacle_i.pose.orientation.z = 0.0
+
+    obstacle_i.scale.x = 1.5
+    obstacle_i.scale.y = 1.5
+    obstacle_i.scale.z = 2.0
+
+    obstacle_i.color.r = 1.0
+    obstacle_i.color.g = 0.0
+    obstacle_i.color.b = 0.0
+    obstacle_i.color.a = 0.3
+
+    obstacle_i.lifetime = rospy.Duration(0.0)
+
+    self.obstacles_static_msg.markers.append(obstacle_i)
+
+
+    # obstacle i
+
+    obstacle_i = Marker()
+
+    obstacle_i.header = Header()
+    obstacle_i.header.stamp = rospy.Time()
+    obstacle_i.header.frame_id = self.world_frame
+
+    obstacle_i.ns = 'static'
+    obstacle_i.id = 2
+
+    obstacle_i.type = 3
+
+    obstacle_i.action = 0
+
+    obstacle_i.pose.position.x = 4.0
+    obstacle_i.pose.position.y = 4.0
+    obstacle_i.pose.position.z = 1.0
+
+    obstacle_i.pose.orientation.w = 1.0
+    obstacle_i.pose.orientation.x = 0.0
+    obstacle_i.pose.orientation.y = 0.0
+    obstacle_i.pose.orientation.z = 0.0
+
+    obstacle_i.scale.x = 1.5
+    obstacle_i.scale.y = 1.5
+    obstacle_i.scale.z = 2.0
+
+    obstacle_i.color.r = 1.0
+    obstacle_i.color.g = 0.0
+    obstacle_i.color.b = 0.0
+    obstacle_i.color.a = 0.3
+
+    obstacle_i.lifetime = rospy.Duration(0.0)
+
+    self.obstacles_static_msg.markers.append(obstacle_i)
+
+
+
+
+    #
+    return
+
+
+  def removeObstaclesStatic(self):
+
+    self.obstacles_static_msg.markers = []
+
+    return
+
+
+  def addObstaclesStatic(self):
+    
+    for obs_i_msg in self.obstacles_static_msg.markers:
+
+      obs_i_msg.action = 0
+
+    return
+
+
+  def removeObstaclesStatic(self):
+
+    for obs_i_msg in self.obstacles_static_msg.markers:
+
+      obs_i_msg.action = 2
+
+    return
+
+
+  def initObstaclesDynamic(self):
+
+    # Set dynamic obstacles
+
+    self.obstacles_dynamic_msg.markers = []
+
+
+    # obstacle i
+
+    obstacle_i = Marker()
+
+    obstacle_i.header = Header()
+    obstacle_i.header.stamp = rospy.Time()
+    obstacle_i.header.frame_id = self.world_frame
+
+    obstacle_i.ns = 'dynamic'
+    obstacle_i.id = 0
+
+    obstacle_i.type = 3
+
+    obstacle_i.action = 0
+
+    obstacle_i.pose.position.x = 6.0
+    obstacle_i.pose.position.y = 3.0
+    obstacle_i.pose.position.z = 1.0
+
+    obstacle_i.pose.orientation.w = 1.0
+    obstacle_i.pose.orientation.x = 0.0
+    obstacle_i.pose.orientation.y = 0.0
+    obstacle_i.pose.orientation.z = 0.0
+
+    obstacle_i.scale.x = 1.0
+    obstacle_i.scale.y = 1.0
+    obstacle_i.scale.z = 2.0
+
+    obstacle_i.color.r = 0.0
+    obstacle_i.color.g = 1.0
+    obstacle_i.color.b = 0.0
+    obstacle_i.color.a = 0.3
+
+    obstacle_i.lifetime = rospy.Duration(1.0/self.dynamic_obst_loop_freq)
+
+    self.obstacles_dynamic_msg.markers.append(obstacle_i)
+
+    return
+
+
+  def emptyObstaclesDynamic(self):
+
+    self.obstacles_dynamic_msg.markers = []
+
+    return
