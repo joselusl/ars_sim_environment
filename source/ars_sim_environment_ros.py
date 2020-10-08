@@ -265,6 +265,45 @@ class ArsSimEnvironmentRos:
 
     obstacle_i.action = 0
 
+    obstacle_i.pose.position.x = 3.0
+    obstacle_i.pose.position.y = 3.0
+    obstacle_i.pose.position.z = 1.0
+
+    obstacle_i.pose.orientation.w = 1.0
+    obstacle_i.pose.orientation.x = 0.0
+    obstacle_i.pose.orientation.y = 0.0
+    obstacle_i.pose.orientation.z = 0.0
+
+    obstacle_i.scale.x = 2.0
+    obstacle_i.scale.y = 2.0
+    obstacle_i.scale.z = 2.0
+
+    obstacle_i.color.r = 1.0
+    obstacle_i.color.g = 0.0
+    obstacle_i.color.b = 0.0
+    obstacle_i.color.a = 0.3
+
+    obstacle_i.lifetime = rospy.Duration(0.0)
+
+    self.obstacles_static_msg.markers.append(obstacle_i)
+
+
+    '''
+    # obstacle i
+
+    obstacle_i = Marker()
+
+    obstacle_i.header = Header()
+    obstacle_i.header.stamp = rospy.Time()
+    obstacle_i.header.frame_id = self.world_frame
+
+    obstacle_i.ns = 'static'
+    obstacle_i.id = 0
+
+    obstacle_i.type = 3
+
+    obstacle_i.action = 0
+
     obstacle_i.pose.position.x = 2.0
     obstacle_i.pose.position.y = 2.0
     obstacle_i.pose.position.z = 1.0
@@ -325,6 +364,7 @@ class ArsSimEnvironmentRos:
 
     self.obstacles_static_msg.markers.append(obstacle_i)
 
+    '''
 
 
 
@@ -379,7 +419,7 @@ class ArsSimEnvironmentRos:
 
     obstacle_i.action = 0
 
-    obstacle_i.pose.position.x = 6.0
+    obstacle_i.pose.position.x = 6.5
     obstacle_i.pose.position.y = 3.0
     obstacle_i.pose.position.z = 1.0
 
@@ -400,6 +440,124 @@ class ArsSimEnvironmentRos:
     obstacle_i.lifetime = rospy.Duration(1.0/self.dynamic_obst_loop_freq)
 
     self.obstacles_dynamic_msg.markers.append(obstacle_i)
+
+
+
+    # obstacle i
+
+    obstacle_i = Marker()
+
+    obstacle_i.header = Header()
+    obstacle_i.header.stamp = rospy.Time()
+    obstacle_i.header.frame_id = self.world_frame
+
+    obstacle_i.ns = 'dynamic'
+    obstacle_i.id = 1
+
+    obstacle_i.type = 3
+
+    obstacle_i.action = 0
+
+    obstacle_i.pose.position.x = 3.5
+    obstacle_i.pose.position.y = 0.0
+    obstacle_i.pose.position.z = 1.0
+
+    obstacle_i.pose.orientation.w = 1.0
+    obstacle_i.pose.orientation.x = 0.0
+    obstacle_i.pose.orientation.y = 0.0
+    obstacle_i.pose.orientation.z = 0.0
+
+    obstacle_i.scale.x = 1.0
+    obstacle_i.scale.y = 1.0
+    obstacle_i.scale.z = 2.0
+
+    obstacle_i.color.r = 0.0
+    obstacle_i.color.g = 1.0
+    obstacle_i.color.b = 0.0
+    obstacle_i.color.a = 0.3
+
+    obstacle_i.lifetime = rospy.Duration(1.0/self.dynamic_obst_loop_freq)
+
+    self.obstacles_dynamic_msg.markers.append(obstacle_i)
+
+
+    # obstacle i
+    
+    obstacle_i = Marker()
+
+    obstacle_i.header = Header()
+    obstacle_i.header.stamp = rospy.Time()
+    obstacle_i.header.frame_id = self.world_frame
+
+    obstacle_i.ns = 'dynamic'
+    obstacle_i.id = 2
+
+    obstacle_i.type = 3
+
+    obstacle_i.action = 0
+
+    obstacle_i.pose.position.x = 3.0
+    obstacle_i.pose.position.y = 6.0
+    obstacle_i.pose.position.z = 1.0
+
+    obstacle_i.pose.orientation.w = 1.0
+    obstacle_i.pose.orientation.x = 0.0
+    obstacle_i.pose.orientation.y = 0.0
+    obstacle_i.pose.orientation.z = 0.0
+
+    obstacle_i.scale.x = 1.0
+    obstacle_i.scale.y = 1.0
+    obstacle_i.scale.z = 2.0
+
+    obstacle_i.color.r = 0.0
+    obstacle_i.color.g = 1.0
+    obstacle_i.color.b = 0.0
+    obstacle_i.color.a = 0.3
+
+    obstacle_i.lifetime = rospy.Duration(1.0/self.dynamic_obst_loop_freq)
+
+    self.obstacles_dynamic_msg.markers.append(obstacle_i)
+
+
+
+    # obstacle i
+    
+    obstacle_i = Marker()
+
+    obstacle_i.header = Header()
+    obstacle_i.header.stamp = rospy.Time()
+    obstacle_i.header.frame_id = self.world_frame
+
+    obstacle_i.ns = 'dynamic'
+    obstacle_i.id = 3
+
+    obstacle_i.type = 3
+
+    obstacle_i.action = 0
+
+    obstacle_i.pose.position.x = 0.5
+    obstacle_i.pose.position.y = 3.0
+    obstacle_i.pose.position.z = 1.0
+
+    obstacle_i.pose.orientation.w = 1.0
+    obstacle_i.pose.orientation.x = 0.0
+    obstacle_i.pose.orientation.y = 0.0
+    obstacle_i.pose.orientation.z = 0.0
+
+    obstacle_i.scale.x = 1.0
+    obstacle_i.scale.y = 1.0
+    obstacle_i.scale.z = 2.0
+
+    obstacle_i.color.r = 0.0
+    obstacle_i.color.g = 1.0
+    obstacle_i.color.b = 0.0
+    obstacle_i.color.a = 0.3
+
+    obstacle_i.lifetime = rospy.Duration(1.0/self.dynamic_obst_loop_freq)
+
+    self.obstacles_dynamic_msg.markers.append(obstacle_i)
+    
+
 
     return
 
