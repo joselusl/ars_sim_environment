@@ -458,7 +458,7 @@ class ArsSimEnvironmentRos:
 
     obstacle_i.action = 0
 
-    obstacle_i.pose.position.x = 3.5
+    obstacle_i.pose.position.x = 3.0
     obstacle_i.pose.position.y = 0.0
     obstacle_i.pose.position.z = 1.0
 
@@ -536,7 +536,7 @@ class ArsSimEnvironmentRos:
     obstacle_i.action = 0
 
     obstacle_i.pose.position.x = 0.5
-    obstacle_i.pose.position.y = 2.5
+    obstacle_i.pose.position.y = 3.0
     obstacle_i.pose.position.z = 1.0
 
     obstacle_i.pose.orientation.w = 1.0
