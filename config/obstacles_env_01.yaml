@@ -1,0 +1,31 @@
+static:
+- circles:
+    - position: [ 3.0, 3.0, 1.0 ]
+      sizes: [ 2.0, 2.0, 2.0 ]
+    - position: [ 1.5, 1.5, 1.0 ]
+      sizes: [ 0.5, 0.5, 2.0 ]
+    - position: [ 4.5, 1.5, 1.0 ]
+      sizes: [ 0.5, 0.5, 2.0 ]
+    - position: [ 4.5, 4.5, 1.0 ]
+      sizes: [ 0.5, 0.5, 2.0 ]
+    - position: [ 1.5, 4.5, 1.0 ]
+      sizes: [ 0.5, 0.5, 2.0 ]
+    - position: [ 3.0, 1.5, 1.0 ]
+      sizes: [ 0.5, 0.5, 2.0 ]
+    - position: [ 4.5, 3.0, 1.0 ]
+      sizes: [ 0.5, 0.5, 2.0 ]
+    - position: [ 3.0, 4.5, 1.0 ]
+      sizes: [ 0.5, 0.5, 2.0 ]
+    - position: [ 1.5, 3.0, 1.0 ]
+      sizes: [ 0.5, 0.5, 2.0 ]
+dynamic:
+- circles:
+    - position: [ 6.5, 3.0, 1.0 ]
+      sizes: [ 1.0, 1.0, 2.0 ]
+    - position: [ 3.0, 0.0, 1.0 ]
+      sizes: [ 1.0, 1.0, 2.0 ]
+    - position: [ 3.0, 6.0, 1.0 ]
+      sizes: [ 1.0, 1.0, 2.0 ]
+    - position: [ 0.5, 3.0, 1.0 ]
+      sizes: [ 1.0, 1.0, 2.0 ]
+
