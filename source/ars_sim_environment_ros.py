@@ -290,7 +290,7 @@ class ArsSimEnvironmentRos:
             obstacle_i = Marker()
 
             obstacle_i.header = Header()
-            obstacle_i.header.stamp = rospy.Time().now()
+            obstacle_i.header.stamp = rospy.Time()
             obstacle_i.header.frame_id = self.world_frame
 
             obstacle_i.ns = 'static'
@@ -381,7 +381,7 @@ class ArsSimEnvironmentRos:
             obstacle_i = Marker()
 
             obstacle_i.header = Header()
-            obstacle_i.header.stamp = rospy.Time().now()
+            obstacle_i.header.stamp = rospy.Time()
             obstacle_i.header.frame_id = self.world_frame
 
             obstacle_i.ns = 'dynamic'
