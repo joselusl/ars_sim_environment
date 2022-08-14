@@ -7,6 +7,7 @@ import os
 
 # pyyaml - https://pyyaml.org/wiki/PyYAMLDocumentation
 import yaml
+from yaml.loader import SafeLoader
 
 
 
@@ -144,7 +145,7 @@ class ArsSimEnvironmentRos:
     with open(self.environment_descript_yaml_file_name,'r') as file:
         # The FullLoader parameter handles the conversion from YAML
         # scalar values to Python the dictionary format
-        self.environment_descript = yaml.load(file)
+        self.environment_descript = yaml.load(file, Loader=SafeLoader)
 
 
 
