@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import numpy as np
 from numpy import *
 
@@ -11,12 +9,14 @@ from yaml.loader import SafeLoader
 
 
 
-
 # ROS
+import rclpy
+from rclpy.node import Node
+from rclpy.time import Time
+from rclpy.duration import Duration
 
-import rospy
-
-import rospkg
+#import
+from ament_index_python.packages import get_package_share_directory
 
 import std_msgs.msg
 from std_msgs.msg import Bool
@@ -30,15 +30,13 @@ from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
 
 
-
 #
-import ars_lib_helpers
+import ars_lib_helpers.ars_lib_helpers as ars_lib_helpers
 
 
 
 
-
-class ArsSimEnvironmentRos:
+class ArsSimEnvironmentRos(Node):
 
   #######
 
@@ -64,6 +62,7 @@ class ArsSimEnvironmentRos:
   static_obst_loop_freq = None
   # Timer
   static_obst_loop_timer = None
+  static_obst_loop_timer_active = False 
 
 
   # Obstacles static pub
@@ -82,7 +81,7 @@ class ArsSimEnvironmentRos:
 
   #########
 
-  def __init__(self):
+  def __init__(self, node_name='ars_sim_environment_node'):
 
     # World frame
     self.world_frame = 'world'
@@ -106,7 +105,8 @@ class ArsSimEnvironmentRos:
     self.static_obst_loop_freq = 10.0
     # Timer
     self.static_obst_loop_timer = None
-
+    self.static_obst_loop_timer_active = False 
+    
     #
     self.obstacles_static_msg = MarkerArray()
     #
@@ -115,27 +115,35 @@ class ArsSimEnvironmentRos:
     #
     self.id_first_available = 0
 
+    self.__init(node_name)
+
     # end
     return
 
 
-  def init(self, node_name='ars_sim_environment_node'):
-    #
-
+  def __init(self, node_name='ars_sim_environment_node'):
     # Init ROS
-    rospy.init_node(node_name, anonymous=True)
+    super().__init__(node_name)
 
     
     # Package path
-    pkg_path = rospkg.RosPack().get_path('ars_sim_environment')
+    try:
+      pkg_path = get_package_share_directory('ars_sim_environment')
+      print(f"The path to the package is: {pkg_path}")
+    except PackageNotFoundError:
+      print("Package not found")
     
 
     #### READING PARAMETERS ###
     
     # Environment description
     default_environment_descript_yaml_file_name = os.path.join(pkg_path,'config','obstacles_env_01.yaml')
-    environment_descript_yaml_file_name_str = rospy.get_param('~environment_description_yaml_file', default_environment_descript_yaml_file_name)
+    # Declare the parameter with a default value
+    self.declare_parameter('environment_description_yaml_file', default_environment_descript_yaml_file_name)
+    # Get the parameter value
+    environment_descript_yaml_file_name_str = self.get_parameter('environment_description_yaml_file').get_parameter_value().string_value
     print(environment_descript_yaml_file_name_str)
+    #
     self.environment_descript_yaml_file_name = os.path.abspath(environment_descript_yaml_file_name_str)
 
 
@@ -165,19 +173,20 @@ class ArsSimEnvironmentRos:
     # Publishers
 
     # 
-    self.obstacles_static_pub = rospy.Publisher('obstacles_static', MarkerArray, queue_size=1, latch=True)
+    self.obstacles_static_pub = self.create_publisher(MarkerArray, 'obstacles_static', qos_profile=10)
     #
-    self.obstacles_dynamic_pub = rospy.Publisher('obstacles_dynamic', MarkerArray, queue_size=1, latch=True)
+    self.obstacles_dynamic_pub = self.create_publisher(MarkerArray, 'obstacles_dynamic', qos_profile=10)
 
     # Subscribers
-    self.flag_dyn_obst_sub = rospy.Subscriber('flag_dynamic_obstacles', Bool, self.flagDynamObstCallback)
+    self.flag_dyn_obst_sub = self.create_subscription(Bool, 'flag_dynamic_obstacles', self.flagDynamObstCallback, qos_profile=10)
 
 
     # Timers
     #
-    self.dynamic_obst_loop_timer = rospy.Timer(rospy.Duration(1.0/self.dynamic_obst_loop_freq), self.dynamicObstaclesLoopTimerCallback)
+    self.dynamic_obst_loop_timer = self.create_timer(1.0/self.dynamic_obst_loop_freq, self.dynamicObstaclesLoopTimerCallback)
     #
-    self.static_obst_loop_timer = rospy.Timer(rospy.Duration(1.0), self.staticObstaclesLoopTimerCallback, oneshot=True)
+    self.static_obst_loop_timer = self.create_timer(1.0, self.staticObstaclesLoopTimerCallback)
+    self.static_obst_loop_timer_active = True
 
 
     # End
@@ -186,7 +195,7 @@ class ArsSimEnvironmentRos:
 
   def run(self):
 
-    rospy.spin()
+    rclpy.spin(self)
 
     return
 
@@ -232,24 +241,28 @@ class ArsSimEnvironmentRos:
     return
 
 
-  def staticObstaclesLoopTimerCallback(self, timer_msg):
+  def staticObstaclesLoopTimerCallback(self):
 
-    # Get time
-    time_stamp_current = rospy.Time.now()
+    if self.static_obst_loop_timer_active:
 
+      # Get time
+      time_stamp_current = self.get_clock().now()
 
-    # Publish static obstacles
-    self.obstacles_static_pub.publish(self.obstacles_static_msg)
+      # Publish static obstacles
+      self.obstacles_static_pub.publish(self.obstacles_static_msg)
+
+      # Deactivate the timer
+      self.static_obst_loop_timer_active = False
+      self.static_obst_loop_timer.cancel()
     
     # End
     return
 
-  
 
-  def dynamicObstaclesLoopTimerCallback(self, timer_msg):
+  def dynamicObstaclesLoopTimerCallback(self):
 
     # Get time
-    time_stamp_current = rospy.Time.now()
+    time_stamp_current = self.get_clock().now()
 
     #
     self.updateDynObstaclesAndPublish(time_stamp_current)
@@ -284,7 +297,7 @@ class ArsSimEnvironmentRos:
             obstacle_i = Marker()
 
             obstacle_i.header = Header()
-            obstacle_i.header.stamp = rospy.Time()
+            obstacle_i.header.stamp = self.get_clock().now().to_msg()
             obstacle_i.header.frame_id = self.world_frame
 
             obstacle_i.ns = 'static'
@@ -312,7 +325,7 @@ class ArsSimEnvironmentRos:
             obstacle_i.color.b = 0.0
             obstacle_i.color.a = 0.3
 
-            obstacle_i.lifetime = rospy.Duration(0.0)
+            obstacle_i.lifetime = Duration(seconds=0.0).to_msg()
 
             #
             self.obstacles_static_msg.markers.append(obstacle_i)
@@ -375,7 +388,7 @@ class ArsSimEnvironmentRos:
             obstacle_i = Marker()
 
             obstacle_i.header = Header()
-            obstacle_i.header.stamp = rospy.Time()
+            obstacle_i.header.stamp = self.get_clock().now().to_msg()
             obstacle_i.header.frame_id = self.world_frame
 
             obstacle_i.ns = 'dynamic'
@@ -403,7 +416,7 @@ class ArsSimEnvironmentRos:
             obstacle_i.color.b = 0.0
             obstacle_i.color.a = 0.3
 
-            obstacle_i.lifetime = rospy.Duration(1.0/self.dynamic_obst_loop_freq)
+            obstacle_i.lifetime = Duration(seconds=1.0/self.dynamic_obst_loop_freq).to_msg()
 
             #
             self.obstacles_dynamic_msg.markers.append(obstacle_i)
