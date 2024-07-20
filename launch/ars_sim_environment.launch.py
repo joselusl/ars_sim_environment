@@ -18,7 +18,7 @@ def generate_launch_description():
             description='Output setting for the nodes'
         ),
         
-        # Launch the robot dynamics node
+        # Launch the node
         Node(
             package='ars_sim_environment',
             executable='ars_sim_environment_ros_node',

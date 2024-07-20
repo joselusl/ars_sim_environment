@@ -173,7 +173,11 @@ class ArsSimEnvironmentRos(Node):
     # Publishers
 
     # 
-    self.obstacles_static_pub = self.create_publisher(MarkerArray, 'obstacles_static', qos_profile=10)
+    obstacles_static_qos_profile = rclpy.qos.QoSProfile(depth=1)
+    obstacles_static_qos_profile.history=rclpy.qos.HistoryPolicy.KEEP_LAST
+    obstacles_static_qos_profile.durability = rclpy.qos.DurabilityPolicy.TRANSIENT_LOCAL
+    obstacles_static_qos_profile.reliability=rclpy.qos.ReliabilityPolicy.RELIABLE
+    self.obstacles_static_pub = self.create_publisher(MarkerArray, 'obstacles_static', obstacles_static_qos_profile)
     #
     self.obstacles_dynamic_pub = self.create_publisher(MarkerArray, 'obstacles_dynamic', qos_profile=10)
 

@@ -8,11 +8,11 @@
 
   <license>BSD</license>
 
-  <depend>std_msgs</depend>
-  <depend>geometry_msgs</depend>
-  <depend>visualization_msgs</depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>visualization_msgs</exec_depend>
 
-  <depend>ars_lib_helpers</depend>
+  <exec_depend>ars_lib_helpers</exec_depend>
 
   <exec_depend>python-numpy</exec_depend>
   <exec_depend>python-nvector</exec_depend>
