@@ -83,6 +83,9 @@ class ArsSimEnvironmentRos(Node):
 
   def __init__(self, node_name='ars_sim_environment_node'):
 
+    # Init ROS
+    super().__init__(node_name)
+
     # World frame
     self.world_frame = 'world'
 
@@ -122,9 +125,6 @@ class ArsSimEnvironmentRos(Node):
 
 
   def __init(self, node_name='ars_sim_environment_node'):
-    # Init ROS
-    super().__init__(node_name)
-
     
     # Package path
     try:
