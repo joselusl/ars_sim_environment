@@ -130,7 +130,7 @@ class ArsSimEnvironmentRos(Node):
     try:
       pkg_path = get_package_share_directory('ars_sim_environment')
       print(f"The path to the package is: {pkg_path}")
-    except PackageNotFoundError:
+    except ModuleNotFoundError:
       print("Package not found")
     
 
