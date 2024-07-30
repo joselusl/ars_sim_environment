@@ -129,9 +129,9 @@ class ArsSimEnvironmentRos(Node):
     # Package path
     try:
       pkg_path = get_package_share_directory('ars_sim_environment')
-      print(f"The path to the package is: {pkg_path}")
+      self.get_logger().info(f"The path to the package is: {pkg_path}")
     except ModuleNotFoundError:
-      print("Package not found")
+      self.get_logger().info("Package not found")
     
 
     #### READING PARAMETERS ###
@@ -142,7 +142,7 @@ class ArsSimEnvironmentRos(Node):
     self.declare_parameter('environment_description_yaml_file', default_environment_descript_yaml_file_name)
     # Get the parameter value
     environment_descript_yaml_file_name_str = self.get_parameter('environment_description_yaml_file').get_parameter_value().string_value
-    print(environment_descript_yaml_file_name_str)
+    self.get_logger().info(environment_descript_yaml_file_name_str)
     #
     self.environment_descript_yaml_file_name = os.path.abspath(environment_descript_yaml_file_name_str)
 
@@ -284,16 +284,16 @@ class ArsSimEnvironmentRos(Node):
     self.obstacles_static_msg.markers = []
 
     #
-    print('Obstacles static:')
+    self.get_logger().info('Obstacles static:')
 
     for object_env in self.environment_descript['static']:
 
-        print('Circles:')
+        self.get_logger().info('Circles:')
 
         for circle in object_env['circles']:
 
             #
-            print(circle)
+            self.get_logger().info(str(circle))
 
 
             # obstacle i
@@ -375,16 +375,16 @@ class ArsSimEnvironmentRos(Node):
 
 
     #
-    print('Obstacles dynamic:')
+    self.get_logger().info('Obstacles dynamic:')
 
     for object_env in self.environment_descript['dynamic']:
 
-        print('Circles:')
+        self.get_logger().info('Circles:')
 
         for circle in object_env['circles']:
 
             #
-            print(circle)
+            self.get_logger().info(str(circle))
 
 
             # obstacle i
